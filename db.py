@@ -5,9 +5,7 @@ DB_USERNAME = os.getenv("DB_USERNAME")
 DB_PASSWORD = os.getenv("OS_PASSWORD")
 
 # @todo
-# 1) Add Show Leaderboards - DONE
-# 2) Add delete <leaderboard>
-# 3) Add Pagination to show <leaderboard>
+# 1) Add Pagination to show <leaderboard>
 
 db = mysql.connector.connect(
     host="localhost",

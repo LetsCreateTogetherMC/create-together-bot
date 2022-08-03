@@ -13,6 +13,7 @@ USER_ROLE = os.getenv("USER_ROLE")
 DB_NAME = os.getenv("DB_NAME")
 
 bot = commands.Bot(command_prefix=PREFIX)
+bot.remove_command("help")
 
 
 @bot.event
@@ -92,6 +93,14 @@ async def clear(ctx, leaderboard=""):
             msg = generate_embed(res["success"], res["message"])
             await ctx.send(embed=msg)
 
+
+@bot.command(name="help", help="Shows the help message")
+async def help(ctx):
+    if verify_role(ctx):
+        msg = generate_help_embed()
+
+        await ctx.send(embed=msg)
+
 # Utility Functions
 
 
@@ -153,6 +162,31 @@ def generate_embed(success: bool, message: str) -> discord.Embed:
         colour=0x0084ff if success else 0x991b1b,
         description=message,
     )
+
+    return embed
+
+
+def generate_help_embed() -> discord.Embed:
+    embed = discord.Embed(
+        title="Help",
+        colour=0x0084ff
+    )
+
+    help_data = {
+        "create": "Creates a leaderboard.\nSyntax - `create <leaderboard-name> <point-symbol>`\nDefault: `symbol`: :coin:",
+        "add": "Adds points to a player on a leaderboard.\nSyntax - `add <leaderboard> <player> <amount>`",
+        "remove": "Removes points from a player on a leaderboard.\nSyntax - `remove <leaderboard> <player> <amount>`",
+        "show": "Shows the rankings of a leaderboard\nSyntax - `show <leaderboard>`\nIf no leaderboard is provided, show a list of leaderboards instead",
+        "clear": "Deletes a leaderboard\nSyntax - `clear <leaderboard>`\nIf no leaderboard is provided, deletes all the leaderboards insted",
+        "help": "Shows this message"
+    }
+
+    for command in help_data:
+        embed.add_field(
+            name=command,
+            value=help_data[command],
+            inline=False
+        )
 
     return embed
 
