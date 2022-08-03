@@ -25,5 +25,5 @@ DB_HOST = "<database-address>"
 ```
 \
 `USER_ROLE` would be the role required to be able to use the bot's commands\
-`PREFIX` would be the bot's prefix. Suggested value: `-`
+`PREFIX` would be the bot's prefix. Suggested value: `-`\
 `DB_HOST` should be set to `localhost`, if running locally
