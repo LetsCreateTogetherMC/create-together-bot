@@ -1,16 +1,20 @@
 import os
 import mysql.connector
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DB_USERNAME = os.getenv("DB_USERNAME")
-DB_PASSWORD = os.getenv("OS_PASSWORD")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
 
 # @todo
 # 1) Add Pagination to show <leaderboard>
 
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="nem14@NemesisDataBase",
+    host=DB_HOST,
+    user=DB_USERNAME,
+    passwd=DB_PASSWORD,
     charset="utf8"
 )
 cursor = db.cursor()

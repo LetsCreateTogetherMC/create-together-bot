@@ -21,7 +21,9 @@ USER_ROLE = "<name-of-the-role>"
 DB_USERNAME = "<database-username>"
 DB_PASSWORD = "<database-password>"
 DB_NAME = "<database-name>"
+DB_HOST = "<database-address>"
 ```
 \
 `USER_ROLE` would be the role required to be able to use the bot's commands\
 `PREFIX` would be the bot's prefix. Suggested value: `-`
+`DB_HOST` should be set to `localhost`, if running locally
