@@ -3,7 +3,12 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-import db
+from db import DB
+
+# @todo
+# 1. Add Config
+# 2. Add -activate command: Broadcasts the leaderboards to a channel if any changes are made
+# 3. Change Icon
 
 # Load Environment Variables
 load_dotenv()
@@ -11,9 +16,15 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 PREFIX = os.getenv("PREFIX")
 USER_ROLE = os.getenv("USER_ROLE")
 DB_NAME = os.getenv("DB_NAME")
+DB_USERNAME = os.getenv("DB_USERNAME")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+CONFIG_FILE = os.getenv("CONFIG_PATH")
 
 bot = commands.Bot(command_prefix=PREFIX)
 bot.remove_command("help")
+
+db = DB(DB_USERNAME, DB_PASSWORD, DB_HOST)
 
 
 @bot.event
