@@ -1,4 +1,5 @@
 import os
+from turtle import title
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -6,7 +7,7 @@ from dotenv import load_dotenv
 from db import DB
 
 # @todo
-# 1. Add Config
+# 1. Add Config - DONE
 # 2. Add -activate command: Broadcasts the leaderboards to a channel if any changes are made
 # 3. Change Icon
 
@@ -14,23 +15,28 @@ from db import DB
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 PREFIX = os.getenv("PREFIX")
-USER_ROLE = os.getenv("USER_ROLE")
 DB_NAME = os.getenv("DB_NAME")
 DB_USERNAME = os.getenv("DB_USERNAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
-CONFIG_FILE = os.getenv("CONFIG_PATH")
+
+# Config
+USER_ROLE = "bot-user"
+COLOR_SUCCESS = "0x0084ff"
+COLOR_ERROR = "0x991b1b"
+
+db = DB(DB_USERNAME, DB_PASSWORD, DB_HOST)
+
 
 bot = commands.Bot(command_prefix=PREFIX)
 bot.remove_command("help")
-
-db = DB(DB_USERNAME, DB_PASSWORD, DB_HOST)
 
 
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
     db.init_db(DB_NAME)
+    load_config()
 
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="the cogwheels"))
 
@@ -112,6 +118,28 @@ async def help(ctx):
 
         await ctx.send(embed=msg)
 
+
+@bot.command(name="config", help="View or change the config")
+async def config(ctx, option: str = "", value: str = ""):
+    if verify_role(ctx):
+        if value == "":
+            res = db.get_config(option)
+            msg = None
+
+            if res["success"]:
+                msg = generate_config_list(res["message"])
+            else:
+                msg = generate_embed(res["success"], res["message"])
+
+            await ctx.send(embed=msg)
+        else:
+            # Set option to value
+            res = db.set_config(option, value)
+            msg = generate_embed(res["success"], res["message"])
+
+            await ctx.send(embed=msg)
+            load_config()
+
 # Utility Functions
 
 
@@ -120,9 +148,17 @@ def verify_role(ctx) -> bool:
     return required_role in ctx.author.roles
 
 
+def load_config() -> bool:
+    global USER_ROLE, COLOR_SUCCESS, COLOR_ERROR
+
+    USER_ROLE = db.get_single_config("user_role")
+    COLOR_SUCCESS = db.get_single_config("color_success")
+    COLOR_ERROR = db.get_single_config("color_error")
+
+
 def format_rankings(leaderboard: str, data: list, symbol: str) -> discord.Embed:
     embed = discord.Embed(
-        colour=0x0084ff,
+        colour=discord.Colour(int(COLOR_SUCCESS, 16)),
         title=f"{leaderboard.capitalize()} Rankings"
     )
 
@@ -147,7 +183,7 @@ def format_rankings(leaderboard: str, data: list, symbol: str) -> discord.Embed:
 def format_leaderboard_list(tables: list) -> discord.Embed:
     embed = discord.Embed(
         title="Leaderboards",
-        colour=0x0084ff
+        colour=discord.Colour(int(COLOR_SUCCESS, 16))
     )
 
     idx = 1
@@ -155,7 +191,7 @@ def format_leaderboard_list(tables: list) -> discord.Embed:
     for table in tables:
         table_name = table[0]
 
-        if table_name == "global":
+        if table_name == "global" or table_name == "config":
             continue
 
         symbol = db.get_symbol(table_name)
@@ -170,8 +206,10 @@ def format_leaderboard_list(tables: list) -> discord.Embed:
 
 
 def generate_embed(success: bool, message: str) -> discord.Embed:
+    color = COLOR_SUCCESS if success else COLOR_ERROR
+
     embed = discord.Embed(
-        colour=0x0084ff if success else 0x991b1b,
+        colour=discord.Colour(int(color, 16)),
         description=message,
     )
 
@@ -181,7 +219,7 @@ def generate_embed(success: bool, message: str) -> discord.Embed:
 def generate_help_embed() -> discord.Embed:
     embed = discord.Embed(
         title="Help",
-        colour=0x0084ff
+        colour=discord.Colour(int(COLOR_SUCCESS, 16))
     )
 
     help_data = {
@@ -190,6 +228,7 @@ def generate_help_embed() -> discord.Embed:
         "remove": "Removes points from a player on a leaderboard.\nSyntax - `remove <leaderboard> <player> <amount>`",
         "show": "Shows the rankings of a leaderboard\nSyntax - `show <leaderboard>`\nIf no leaderboard is provided, show a list of leaderboards instead",
         "clear": "Deletes a leaderboard\nSyntax - `clear <leaderboard>`\nIf no leaderboard is provided, deletes all the leaderboards insted",
+        "config": "View and/or change the bot config\nSyntax - config <option> <value>`\nIf no option is provided, lists all options with values\nIf no value is provided, then show the value of the provided option insted",
         "help": "Shows this message"
     }
 
@@ -198,6 +237,21 @@ def generate_help_embed() -> discord.Embed:
             name=command,
             value=help_data[command],
             inline=False
+        )
+
+    return embed
+
+
+def generate_config_list(items: list) -> discord.Embed:
+    embed = discord.Embed(
+        title="Config",
+        colour=discord.Colour(int(COLOR_SUCCESS, 16))
+    )
+
+    for item in items:
+        embed.add_field(
+            name=item[0],
+            value=item[1]
         )
 
     return embed
