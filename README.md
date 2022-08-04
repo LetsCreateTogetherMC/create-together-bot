@@ -9,6 +9,8 @@ The official(?) bot for the Let's Create...Together Discord server.
 3. Add a file in the root directory called `.env` [More details below]
 4. Run the bot - `py main.py` or `python main.py`
 
+**Note:** MySQL is required for this bot to work\
+
 ### Setting up the environment variables
 
 The bot requires some environment variables to be set in order to work. It contains the config and sensitive information.\
@@ -16,7 +18,6 @@ Create a file named `.env` in the root directory and put the following things in
 ```
 DISCORD_TOKEN = "<your-discord-token>"
 PREFIX = "<prefix-for-the-bot>"
-USER_ROLE = "<name-of-the-role>"
 
 DB_USERNAME = "<database-username>"
 DB_PASSWORD = "<database-password>"
@@ -24,6 +25,5 @@ DB_NAME = "<database-name>"
 DB_HOST = "<database-address>"
 ```
 \
-`USER_ROLE` would be the role required to be able to use the bot's commands\
 `PREFIX` would be the bot's prefix. Suggested value: `-`\
 `DB_HOST` should be set to `localhost`, if running locally

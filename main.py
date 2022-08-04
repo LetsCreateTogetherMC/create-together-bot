@@ -7,9 +7,7 @@ from dotenv import load_dotenv
 from db import DB
 
 # @todo
-# 1. Add Config - DONE
-# 2. Add -activate command: Broadcasts the leaderboards to a channel if any changes are made - DONE
-# 3. Change Icon
+# 1. Change Icon
 
 # Load Environment Variables
 load_dotenv()
