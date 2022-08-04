@@ -55,7 +55,8 @@ class DB:
             "INSERT INTO config VALUES(%s, %s)", [
                 ["user_role", "bot-user"],
                 ["color_success", "0x0084ff"],
-                ["color_error", "0x991b1b"]
+                ["color_error", "0x991b1b"],
+                ["broadcast_channel", ""]
             ]
         )
         self.db.commit()

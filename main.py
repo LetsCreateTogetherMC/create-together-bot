@@ -8,7 +8,7 @@ from db import DB
 
 # @todo
 # 1. Add Config - DONE
-# 2. Add -activate command: Broadcasts the leaderboards to a channel if any changes are made
+# 2. Add -activate command: Broadcasts the leaderboards to a channel if any changes are made - DONE
 # 3. Change Icon
 
 # Load Environment Variables
@@ -24,6 +24,7 @@ DB_HOST = os.getenv("DB_HOST")
 USER_ROLE = "bot-user"
 COLOR_SUCCESS = "0x0084ff"
 COLOR_ERROR = "0x991b1b"
+BROADCAST_CHANNEL = None
 
 db = DB(DB_USERNAME, DB_PASSWORD, DB_HOST)
 
@@ -66,6 +67,8 @@ async def add_points(ctx, leaderboard, user: discord.Member, amount: int):
         embed = generate_embed(res["success"], msg)
         await ctx.send(embed=embed)
 
+        await broadcast_leaderboard(leaderboard)
+
 
 @bot.command(name="remove", help="Remove Points from a User in a Leaderboard")
 async def remove_points(ctx, leaderboard, user: discord.Member, amount: int):
@@ -81,6 +84,8 @@ async def remove_points(ctx, leaderboard, user: discord.Member, amount: int):
 
         embed = generate_embed(res["success"], msg)
         await ctx.send(embed=embed)
+
+        await broadcast_leaderboard(leaderboard)
 
 
 @bot.command(name="show", help="View a Leaderboard")
@@ -140,6 +145,17 @@ async def config(ctx, option: str = "", value: str = ""):
             await ctx.send(embed=msg)
             load_config()
 
+
+async def broadcast_leaderboard(leaderboard: str) -> None:
+    if not BROADCAST_CHANNEL:
+        return
+
+    channel = bot.get_channel(int(BROADCAST_CHANNEL))
+    res = db.get_leaderboard(leaderboard)
+    msg = format_rankings(leaderboard, res["message"], res["symbol"])
+    await channel.send(embed=msg)
+
+
 # Utility Functions
 
 
@@ -149,11 +165,12 @@ def verify_role(ctx) -> bool:
 
 
 def load_config() -> bool:
-    global USER_ROLE, COLOR_SUCCESS, COLOR_ERROR
+    global USER_ROLE, COLOR_SUCCESS, COLOR_ERROR, BROADCAST_CHANNEL
 
     USER_ROLE = db.get_single_config("user_role")
     COLOR_SUCCESS = db.get_single_config("color_success")
     COLOR_ERROR = db.get_single_config("color_error")
+    BROADCAST_CHANNEL = db.get_single_config("broadcast_channel")
 
 
 def format_rankings(leaderboard: str, data: list, symbol: str) -> discord.Embed:
@@ -173,7 +190,7 @@ def format_rankings(leaderboard: str, data: list, symbol: str) -> discord.Embed:
 
     if len(data) == 0:
         embed.add_field(
-            name="",
+            name="No one here",
             value="*Its lonely here...*"
         )
 
