@@ -52,14 +52,14 @@ class DB:
         print("Database Created!")
 
     def create_global_table(self) -> None:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
             f"CREATE TABLE global(leaderboard VARCHAR(100) NOT NULL, symbol VARCHAR(50) DEFAULT ':coin:')")
         self.db.commit()
 
     def create_config_table(self) -> None:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
             "CREATE TABLE config(property VARCHAR(50), value VARCHAR(70))")
@@ -74,7 +74,7 @@ class DB:
         self.db.commit()
 
     def create_table(self, name: str, symbol: str = ":coin:") -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         if self.table_exists(name):
             return {
@@ -95,7 +95,7 @@ class DB:
         }
 
     def add_user_to_table(self, leaderboard: str, user_id: int, user_name: str) -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
             f"SELECT * FROM {leaderboard} WHERE user_id = '{user_id}'")
@@ -119,7 +119,7 @@ class DB:
         }
 
     def add_points_to_user(self, leaderboard: str, user_id: int, amount: int, user_name: str) -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
             f"SELECT * FROM {leaderboard} WHERE user_id = '{user_id}'")
@@ -143,7 +143,7 @@ class DB:
         }
 
     def get_leaderboard(self, leaderboard: str) -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
             f"SELECT * FROM {leaderboard} ORDER BY points DESC")
@@ -156,7 +156,7 @@ class DB:
         }
 
     def get_leaderboards(self) -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute("SHOW TABLES")
         tables = self.cursor.fetchall()
@@ -167,7 +167,7 @@ class DB:
         }
 
     def delete_leaderboard(self, leaderboard: str) -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         if not self.table_exists(leaderboard):
             return {
@@ -187,7 +187,7 @@ class DB:
     def clear_db(self) -> dict:
         """Deletes all the tables from the database"""
 
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute("SHOW TABLES")
         tables = self.cursor.fetchall()
@@ -208,7 +208,7 @@ class DB:
         }
 
     def get_config(self, option: str = "") -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         query = "SELECT * FROM config"
 
@@ -230,7 +230,7 @@ class DB:
         }
 
     def set_config(self, option: str = "", value: str = "") -> dict:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         if option == "" or value == "":
             return {
@@ -260,7 +260,7 @@ class DB:
     # Utils
 
     def get_symbol(self, leaderboard: str) -> str:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
             f"SELECT symbol from global WHERE leaderboard LIKE '{leaderboard}'")
@@ -268,7 +268,7 @@ class DB:
         return symbol
 
     def get_single_config(self, option: str = "") -> str:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
             f"SELECT value FROM config WHERE property LIKE '{option}'")
@@ -277,7 +277,7 @@ class DB:
         return value
 
     def table_exists(self, table_name: str) -> bool:
-        self.cursor.ping(reconnect=True, attempts=5)
+        self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(f"SHOW TABLES LIKE '{table_name}'")
         res = self.cursor.fetchall()
