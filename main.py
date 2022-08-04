@@ -1,13 +1,9 @@
 import os
-from turtle import title
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
 from db import DB
-
-# @todo
-# 1. Change Icon
 
 # Load Environment Variables
 load_dotenv()
@@ -17,6 +13,7 @@ DB_NAME = os.getenv("DB_NAME")
 DB_USERNAME = os.getenv("DB_USERNAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
 
 # Config
 USER_ROLE = "bot-user"
@@ -24,7 +21,7 @@ COLOR_SUCCESS = "0x0084ff"
 COLOR_ERROR = "0x991b1b"
 BROADCAST_CHANNEL = None
 
-db = DB(DB_USERNAME, DB_PASSWORD, DB_HOST)
+db = DB(DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 
 bot = commands.Bot(command_prefix=PREFIX)
@@ -266,7 +263,7 @@ def generate_config_list(items: list) -> discord.Embed:
     for item in items:
         embed.add_field(
             name=item[0],
-            value=item[1]
+            value=item[1] if item[1] else "Null"
         )
 
     return embed

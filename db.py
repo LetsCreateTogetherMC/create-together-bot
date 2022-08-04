@@ -5,31 +5,39 @@ import mysql.connector
 
 
 class DB:
-    def __init__(self, uname, pwd, host):
+    def __init__(self, uname, pwd, host, port, db):
         self.db = mysql.connector.connect(
             host=host,
             user=uname,
             passwd=pwd,
+            port=port,
+            database=db,
             charset="utf8"
         )
         self.cursor = self.db.cursor()
 
     def init_db(self, db_name: str):
-        self.cursor.execute("SHOW DATABASES")
-        dbs = self.cursor.fetchall()
-        found = False
+        if not self.table_exists("global"):
+            self.create_global_table()
 
-        for item in dbs:
-            if item[0].lower() == db_name.lower():
-                found = True
-                break
+        if not self.table_exists("config"):
+            self.create_config_table()
 
-        if found:
-            print("Database Found")
-            self.cursor.execute(f"USE {db_name}")
-        else:
-            print("Creating Database...")
-            self.create_db(db_name)
+        # self.cursor.execute("SHOW DATABASES")
+        # dbs = self.cursor.fetchall()
+        # found = False
+
+        # for item in dbs:
+        #     if item[0].lower() == db_name.lower():
+        #         found = True
+        #         break
+
+        # if found:
+        #     print("Database Found")
+        #     self.cursor.execute(f"USE {db_name}")
+        # else:
+        #     print("Creating Database...")
+        #     self.create_db(db_name)
 
     def create_db(self, db_name: str) -> None:
         self.cursor.execute(f"CREATE DATABASE {db_name}")
