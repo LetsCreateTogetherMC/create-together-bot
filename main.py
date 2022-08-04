@@ -120,7 +120,8 @@ def format_rankings(leaderboard: str, data: list, symbol: str) -> discord.Embed:
 
         embed.add_field(
             name=f"{idx + 1} - {item[1]}",
-            value=f"{symbol} {item[2]}"
+            value=f"{symbol} {item[2]}",
+            inline=False
         )
 
     if len(data) == 0:

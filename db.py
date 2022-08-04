@@ -110,7 +110,8 @@ def add_points_to_user(leaderboard: str, user_id: int, amount: int, user_name: s
         print(f"User not found in {leaderboard}")
         add_user_to_table(leaderboard, user_id, user_name)
 
-    cursor.execute(f"UPDATE {leaderboard} SET points = points + {amount}")
+    cursor.execute(
+        f"UPDATE {leaderboard} SET points = points + {amount} WHERE user_id = '{user_id}'")
     db.commit()
 
     symbol = get_symbol(leaderboard)
@@ -124,7 +125,7 @@ def add_points_to_user(leaderboard: str, user_id: int, amount: int, user_name: s
 
 
 def get_leaderboard(leaderboard: str) -> dict:
-    cursor.execute(f"SELECT * FROM {leaderboard} ORDER BY points")
+    cursor.execute(f"SELECT * FROM {leaderboard} ORDER BY points DESC")
     data = cursor.fetchall()
     symbol = get_symbol(leaderboard)
     return {
