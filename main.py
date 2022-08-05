@@ -92,7 +92,14 @@ async def show_leaderboard(ctx, leaderboard="", page=1, max=25):
             await ctx.send(embed=msg)
         else:
             res = db.get_leaderboard(leaderboard, page, max)
-            msg = format_rankings(leaderboard, res["message"], res["symbol"])
+            msg = None
+
+            if type(res["message"]) == "list":
+                msg = format_rankings(
+                    leaderboard, res["message"], res["symbol"])
+            else:
+                msg = generate_embed(res["success"], res["message"])
+
             await ctx.send(embed=msg)
 
 
