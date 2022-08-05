@@ -142,13 +142,21 @@ class DB:
             "symbol": symbol
         }
 
-    def get_leaderboard(self, leaderboard: str) -> dict:
+    def get_leaderboard(self, leaderboard: str, page: int = 1, max: int = 25) -> dict:
         self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
-            f"SELECT * FROM {leaderboard} ORDER BY points DESC")
+            f"SELECT * FROM {leaderboard} ORDER BY points DESC LIMIT {max} OFFSET {(page - 1) * max}")
         data = self.cursor.fetchall()
         symbol = self.get_symbol(leaderboard)
+
+        if len(data) == 0:
+            return {
+                "success": False,
+                "message": "Page does not exist",
+                "symbol": symbol
+            }
+
         return {
             "success": True,
             "message": data,

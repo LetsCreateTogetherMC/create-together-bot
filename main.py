@@ -84,14 +84,14 @@ async def remove_points(ctx, leaderboard, user: discord.Member, amount: int):
 
 
 @bot.command(name="show", help="View a Leaderboard")
-async def show_leaderboard(ctx, leaderboard=""):
+async def show_leaderboard(ctx, leaderboard="", page=1, max=25):
     if verify_role(ctx):
         if not leaderboard:
             res = db.get_leaderboards()
             msg = format_leaderboard_list(res["message"])
             await ctx.send(embed=msg)
         else:
-            res = db.get_leaderboard(leaderboard)
+            res = db.get_leaderboard(leaderboard, page, max)
             msg = format_rankings(leaderboard, res["message"], res["symbol"])
             await ctx.send(embed=msg)
 
