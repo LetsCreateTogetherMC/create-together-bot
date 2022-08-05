@@ -94,7 +94,7 @@ async def show_leaderboard(ctx, leaderboard="", page=1, max=25):
             res = db.get_leaderboard(leaderboard, page, max)
             msg = None
 
-            if type(res["message"]) == "list":
+            if type(res["message"]) == list:
                 msg = format_rankings(
                     leaderboard, res["message"], res["symbol"])
             else:
