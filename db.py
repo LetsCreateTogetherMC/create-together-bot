@@ -81,6 +81,7 @@ class DB:
 
         self.cursor.execute(
             f"CREATE TABLE {name}(user_id BIGINT PRIMARY KEY, user_name VARCHAR(50) NOT NULL, points INT DEFAULT 0)")
+        print(symbol)
         self.cursor.execute(
             f"INSERT INTO global VALUES('{name}', '{symbol}')"
         )
