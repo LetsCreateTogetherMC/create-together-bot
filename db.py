@@ -1,8 +1,5 @@
 import mysql.connector
 
-# @todo
-# 1) Add Pagination to show <leaderboard>
-
 
 class DB:
     def __init__(self, uname, pwd, host, port, db):
@@ -272,7 +269,12 @@ class DB:
 
         self.cursor.execute(
             f"SELECT symbol from global WHERE leaderboard LIKE '{leaderboard}'")
-        symbol = self.cursor.fetchone()[0]
+        res = self.cursor.fetchone()
+        symbol = ":coin:"
+
+        if res:
+            symbol = res[0]
+
         return symbol
 
     def get_single_config(self, option: str = "") -> str:
