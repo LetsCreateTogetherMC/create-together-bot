@@ -71,6 +71,7 @@ class DB:
         self.db.commit()
 
     def create_table(self, name: str, symbol: str = ":coin:") -> dict:
+        name = name.lower()
         self.db.ping(reconnect=True, attempts=5)
 
         if self.table_exists(name):
@@ -92,6 +93,7 @@ class DB:
         }
 
     def add_user_to_table(self, leaderboard: str, user_id: int, user_name: str) -> dict:
+        leaderboard = leaderboard.lower()
         self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
@@ -116,6 +118,7 @@ class DB:
         }
 
     def add_points_to_user(self, leaderboard: str, user_id: int, amount: int, user_name: str) -> dict:
+        leaderboard = leaderboard.lower()
         self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
@@ -140,6 +143,7 @@ class DB:
         }
 
     def get_leaderboard(self, leaderboard: str, page: int = 1, max: int = 25) -> dict:
+        leaderboard = leaderboard.lower()
         self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
@@ -172,6 +176,7 @@ class DB:
         }
 
     def delete_leaderboard(self, leaderboard: str) -> dict:
+        leaderboard = leaderboard.lower()
         self.db.ping(reconnect=True, attempts=5)
 
         if not self.table_exists(leaderboard):
@@ -265,6 +270,7 @@ class DB:
     # Utils
 
     def get_symbol(self, leaderboard: str) -> str:
+        leaderboard = leaderboard.lower()
         self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(
@@ -287,6 +293,7 @@ class DB:
         return value
 
     def table_exists(self, table_name: str) -> bool:
+        table_name = table_name.lower()
         self.db.ping(reconnect=True, attempts=5)
 
         self.cursor.execute(f"SHOW TABLES LIKE '{table_name}'")
