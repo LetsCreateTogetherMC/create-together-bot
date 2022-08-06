@@ -9,7 +9,7 @@ class DB:
             passwd=pwd,
             port=port,
             database=db,
-            charset="utf8"
+            charset="utf8mb4"
         )
         self.cursor = self.db.cursor()
 
@@ -80,8 +80,7 @@ class DB:
             }
 
         self.cursor.execute(
-            f"CREATE TABLE {name}(user_id BIGINT PRIMARY KEY, user_name VARCHAR(50) NOT NULL, points INT DEFAULT 0)")
-        print(symbol)
+            f"CREATE TABLE {name}(user_id BIGINT PRIMARY KEY, user_name VARCHAR(50) NOT NULL, points INT DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
         self.cursor.execute(
             f"INSERT INTO global VALUES('{name}', '{symbol}')"
         )
